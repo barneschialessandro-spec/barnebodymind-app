@@ -83,6 +83,17 @@ function LoginScreen({ onLogin }) {
           <Input label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="email@esempio.it" />
           <Input label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Minimo 6 caratteri" />
           {msg && <div style={{ padding: "10px 14px", borderRadius: 10, background: msg.includes("✅") ? C.accentSoft : "#FDDEDE", fontSize: 13, marginBottom: 16, color: msg.includes("✅") ? "#0A7A4A" : "#A02020" }}>{msg}</div>}
+{mode === "login" && (
+  <div style={{ textAlign: "center", marginBottom: 16 }}>
+    <button onClick={async () => {
+      if (!email) { setMsg("❌ Inserisci prima la tua email."); return; }
+      await supabase.auth.resetPasswordForEmail(email, { redirectTo: "https://barnebodymind.it" });
+      setMsg("✅ Email inviata! Controlla la tua casella.");
+    }} style={{ background: "none", border: "none", color: C.muted, fontSize: 13, cursor: "pointer", textDecoration: "underline", fontFamily: "inherit" }}>
+      Password dimenticata?
+    </button>
+  </div>
+)}
           <Btn full variant="dark" onClick={mode === "login" ? handleLogin : handleRegister} style={{ borderRadius: 12, padding: 13 }}>
             {loading ? "⏳ Attendere..." : mode === "login" ? "Accedi →" : "Registrati →"}
           </Btn>
