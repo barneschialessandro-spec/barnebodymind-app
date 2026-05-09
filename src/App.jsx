@@ -68,7 +68,8 @@ function LoginScreen({ onLogin }) {
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {[
               { emoji: "👨‍💼", nome: "Alessandro — Trainer", sub: "Pannello amministratore", data: { role: "admin", nome: "Alessandro", emoji: "👨‍💼" } },
-              { emoji: "👨", nome: "Marco Rossi — Paziente", sub: "Scheda recupero ginocchio", data: { role: "paziente", id: 1, nome: "Marco Rossi", emoji: "👨" } },
+              { emoji: "👨", nome: "Marco Rossi — Cliente", sub: "Accedi alla tua area personale", data: { role: "cliente", id: 1, nome: "Marco Rossi", emoji: "👨" } },
+,
             ].map(u => (
               <button key={u.nome} onClick={() => onLogin(u.data)}
                 style={{ padding: "16px 18px", borderRadius: 14, border: `2px solid ${C.border}`, background: C.surface, cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}>
