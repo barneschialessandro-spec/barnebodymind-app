@@ -419,6 +419,6 @@ export default function App() {
   );
 
   if (!user) return <LoginScreen onLogin={setUser} />;
-  if (user.role === "admin" || user.ruolo === "admin") return <AdminApp user={user} onLogout={handleLogout} />;
+  if (user.ruolo === "admin" || user.role === "admin" || user.email === "barneschi.alessandro@gmail.com") return <AdminApp user={user} onLogout={handleLogout} />;
   return <ClienteApp user={user} onLogout={handleLogout} />;
 }
