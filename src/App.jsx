@@ -310,6 +310,7 @@ function ClienteApp({ user, onLogout }) {
           <div>
             <h1 style={{ fontSize: 24, fontWeight: 800, color: C.text, marginBottom: 6 }}>Ciao, {user.nome || user.email}! 👋</h1>
             <p style={{ color: C.muted, fontSize: 14, marginBottom: 24 }}>Benvenuto nella tua area personale</p>
+<Btn variant="ghost" onClick={onLogout} style={{ marginBottom: 16, fontSize: 12, padding: "6px 14px", color: C.red, borderColor: C.red + "88" }}>← Esci</Btn>
             <Card style={{ background: `linear-gradient(135deg, ${C.primary}, #2D6E52)`, marginBottom: 20 }}>
               <div style={{ color: "#fff" }}>
                 <div style={{ fontSize: 11, opacity: 0.6, marginBottom: 4 }}>IL TUO PERCORSO</div>
