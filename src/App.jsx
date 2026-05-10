@@ -213,27 +213,33 @@ function AdminApp({ user, onLogout }) {
             </Card>
           </div>
         )}
-        {view === "clienti" && (
-          <div style={{ padding: 32 }}>
-            <h1 style={{ fontSize: 26, fontWeight: 800, color: C.text, marginBottom: 24 }}>Clienti</h1>
-            {clienti.length === 0 && <p style={{ color: C.muted }}>Nessun cliente registrato.</p>}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 14 }}>
-              {clienti.map(p => (
-                <Card key={p.id} style={{ padding: 20 }}>
-                  <div style={{ display: "flex", gap: 14 }}>
-                    <Avatar size={46} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 700, fontSize: 16 }}>{p.nome} {p.cognome}</div>
-                      <div style={{ fontSize: 13, color: C.muted }}>{p.email}</div>
-                      <div style={{ marginTop: 8, fontSize: 12, padding: "3px 10px", background: C.accentSoft, borderRadius: 20, display: "inline-block", color: "#0A7A4A", fontWeight: 600 }}>{p.ruolo === "paziente_eb" ? "🩺 EB BodyMind" : "💪 Cliente Standard"}</div>
-                    </div>
-                  </div>
-                  {p.condizioni && <div style={{ marginTop: 12, padding: "9px 12px", background: "#FFF8F0", borderRadius: 8, fontSize: 12, color: "#8A4B1A" }}>⚠️ {p.condizioni}</div>}
-                </Card>
-              ))}
+        {view === "clienti" && !selScheda && (
+  <div style={{ padding: 32 }}>
+    <h1 style={{ fontSize: 26, fontWeight: 800, color: C.text, marginBottom: 24 }}>Clienti</h1>
+    {clienti.length === 0 && <p style={{ color: C.muted }}>Nessun cliente registrato.</p>}
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 14 }}>
+      {clienti.map(p => (
+        <Card key={p.id} style={{ padding: 20 }}>
+          <div style={{ display: "flex", gap: 14 }}>
+            <Avatar size={46} />
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 700, fontSize: 16 }}>{p.nome} {p.cognome}</div>
+              <div style={{ fontSize: 13, color: C.muted }}>{p.email}</div>
+              <div style={{ marginTop: 8, fontSize: 12, padding: "3px 10px", background: C.accentSoft, borderRadius: 20, display: "inline-block", color: "#0A7A4A", fontWeight: 600 }}>{p.ruolo === "paziente_eb" ? "🩺 EB BodyMind" : "💪 Cliente Standard"}</div>
             </div>
           </div>
-        )}
+          {p.condizioni && <div style={{ marginTop: 12, padding: "9px 12px", background: "#FFF8F0", borderRadius: 8, fontSize: 12, color: "#8A4B1A" }}>⚠️ {p.condizioni}</div>}
+          <div style={{ marginTop: 14, display: "flex", gap: 8 }}>
+            <Btn variant="dark" full onClick={() => setSelScheda({ cliente: p, modo: "nuova" })} style={{ borderRadius: 10, padding: "10px 0", fontSize: 13 }}>📋 Crea Scheda</Btn>
+          </div>
+        </Card>
+      ))}
+    </div>
+  </div>
+)}
+{view === "clienti" && selScheda && (
+  <CreaScheda cliente={selScheda.cliente} esercizi={esercizi} onBack={() => setSelScheda(null)} />
+)}
         {view === "esercizi" && (
           <div style={{ padding: 32 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
