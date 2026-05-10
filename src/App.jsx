@@ -253,7 +253,7 @@ function AdminApp({ user, onLogout }) {
   const msgRef = useRef(null);
 
   useEffect(() => {
-    supabase.from("pazienti").select("*").then(({ data }) => data && setClienti(data));
+    supabase.from("pazienti").select("*").neq("ruolo", "admin").then(({ data }) => data && setClienti(data));
     supabase.from("esercizi").select("*").then(({ data }) => data && setEsercizi(data));
   }, []);
 
