@@ -66,7 +66,7 @@ function LoginScreen({ onLogin }) {
     <div style={{ minHeight: "100vh", background: `linear-gradient(135deg, ${C.primary} 0%, #2D6E52 60%, #3D8C6A 100%)`, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
       <div style={{ width: "100%", maxWidth: 420 }}>
         <div style={{ textAlign: "center", marginBottom: 32 }}>
-          <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4CAYAAAA5ZDbSAAApdklEQVR42u29Z5Sd..." style={{ width: 80, height: 80, marginBottom: 12 }} />
+          <img src="/logo.png" style={{ width: 80, height: 80, marginBottom: 12, objectFit: "contain" }} alt="BarneBodyMind" />
           <h1 style={{ fontSize: 30, fontWeight: 800, color: "#fff" }}>BarneBodyMind</h1>
           <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 15, marginTop: 5 }}>Piattaforma di allenamento personalizzato</p>
         </div>
