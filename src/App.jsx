@@ -154,7 +154,7 @@ function CreaScheda({ cliente, esercizi, onBack }) {
   };
 
   const salva = async () => {
-    if (!nome) { setMsg("❌ Inserisci il nome della scheda."); return; }
+    if (!nome || nome.trim() === "") { setMsg("❌ Inserisci il nome della scheda."); return; }
     setSaving(true);
     const { data: scheda } = await supabase.from("schede").insert([{ paziente_id: cliente.id, nome, durata, data_inizio: inizio, data_fine: fine, attiva: true }]).select().single();
     if (scheda) {
