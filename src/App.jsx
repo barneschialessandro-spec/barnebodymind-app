@@ -136,11 +136,118 @@ function LoginScreen({ onLogin }) {
     </div>
   );
 }
+function CreaScheda({ cliente, esercizi, onBack }) {
+  const [nome, setNome] = useState("");
+  const [durata, setDurata] = useState("");
+  const [inizio, setInizio] = useState("");
+  const [fine, setFine] = useState("");
+  const [giorni, setGiorni] = useState([{ giorno: "Lunedì", esercizi: [] }]);
+  const [saving, setSaving] = useState(false);
+  const [msg, setMsg] = useState("");
+
+  const aggiungiGiorno = () => setGiorni(prev => [...prev, { giorno: "Lunedì", esercizi: [] }]);
+
+  const aggiungiEsercizio = (gi) => {
+    setGiorni(prev => prev.map((g, i) => i !== gi ? g : {
+      ...g, esercizi: [...g.esercizi, { esercizio_id: "", serie: 3, ripetizioni: 12, tempo: "", recupero: "90 sec", note: "" }]
+    }));
+  };
+
+  const salva = async () => {
+    if (!nome) { setMsg("❌ Inserisci il nome della scheda."); return; }
+    setSaving(true);
+    const { data: scheda } = await supabase.from("schede").insert([{ paziente_id: cliente.id, nome, durata, data_inizio: inizio, data_fine: fine, attiva: true }]).select().single();
+    if (scheda) {
+      for (let gi = 0; gi < giorni.length; gi++) {
+        const { data: g } = await supabase.from("giorni_scheda").insert([{ scheda_id: scheda.id, giorno: giorni[gi].giorno, ordine: gi }]).select().single();
+        if (g) {
+          for (const ex of giorni[gi].esercizi) {
+            if (ex.esercizio_id) {
+              await supabase.from("esercizi_scheda").insert([{ giorno_id: g.id, esercizio_id: ex.esercizio_id, serie: ex.serie, ripetizioni: ex.ripetizioni, tempo: ex.tempo, recupero: ex.recupero, note: ex.note, completato: false }]);
+            }
+          }
+        }
+      }
+      setMsg("✅ Scheda salvata!");
+      setTimeout(() => onBack(), 1500);
+    }
+    setSaving(false);
+  };
+
+  return (
+    <div style={{ padding: 32, maxWidth: 800 }}>
+      <Btn size="sm" variant="ghost" onClick={onBack} style={{ marginBottom: 20 }}>← Torna ai clienti</Btn>
+      <h1 style={{ fontSize: 24, fontWeight: 800, color: C.text, marginBottom: 6 }}>Crea Scheda</h1>
+      <p style={{ fontSize: 14, color: C.muted, marginBottom: 24 }}>Cliente: <strong>{cliente.nome} {cliente.cognome}</strong></p>
+      <Card style={{ padding: 22, marginBottom: 20 }}>
+        <h3 style={{ fontWeight: 700, fontSize: 16, marginBottom: 16 }}>📋 Dati Scheda</h3>
+        <Input label="Nome Scheda" value={nome} onChange={e => setNome(e.target.value)} placeholder="es. Scheda Recupero Fase 1" />
+        <Input label="Durata" value={durata} onChange={e => setDurata(e.target.value)} placeholder="es. 8 settimane" />
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+          <Input label="Data Inizio" type="date" value={inizio} onChange={e => setInizio(e.target.value)} />
+          <Input label="Data Fine" type="date" value={fine} onChange={e => setFine(e.target.value)} />
+        </div>
+      </Card>
+      {giorni.map((g, gi) => (
+        <Card key={gi} style={{ padding: 22, marginBottom: 14 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+            <select value={g.giorno} onChange={e => setGiorni(prev => prev.map((x, i) => i !== gi ? x : { ...x, giorno: e.target.value }))}
+              style={{ padding: "8px 12px", borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 14, fontFamily: "inherit" }}>
+              {["Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato","Domenica"].map(d => <option key={d}>{d}</option>)}
+            </select>
+            <Btn size="sm" variant="soft" onClick={() => aggiungiEsercizio(gi)}>+ Esercizio</Btn>
+          </div>
+          {g.esercizi.map((ex, ei) => (
+            <div key={ei} style={{ background: C.bg, borderRadius: 10, padding: 14, marginBottom: 10 }}>
+              <div style={{ marginBottom: 10 }}>
+                <div style={{ fontSize: 12, fontWeight: 600, color: C.muted, marginBottom: 5 }}>Esercizio</div>
+                <select value={ex.esercizio_id} onChange={e => setGiorni(prev => prev.map((x, i) => i !== gi ? x : { ...x, esercizi: x.esercizi.map((ex2, ei2) => ei2 !== ei ? ex2 : { ...ex2, esercizio_id: e.target.value }) }))}
+                  style={{ width: "100%", padding: "8px 12px", borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 14, fontFamily: "inherit" }}>
+                  <option value="">-- Seleziona esercizio --</option>
+                  {esercizi.map(e => <option key={e.id} value={e.id}>{e.nome}</option>)}
+                </select>
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 10 }}>
+                {[["Serie", "serie"], ["Ripetizioni", "ripetizioni"]].map(([l, k]) => (
+                  <div key={k}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: C.muted, marginBottom: 4 }}>{l}</div>
+                    <input type="number" value={ex[k]} onChange={e => setGiorni(prev => prev.map((x, i) => i !== gi ? x : { ...x, esercizi: x.esercizi.map((ex2, ei2) => ei2 !== ei ? ex2 : { ...ex2, [k]: e.target.value }) }))}
+                      style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 13 }} />
+                  </div>
+                ))}
+                {[["Tempo", "tempo"], ["Recupero", "recupero"]].map(([l, k]) => (
+                  <div key={k}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: C.muted, marginBottom: 4 }}>{l}</div>
+                    <input value={ex[k]} onChange={e => setGiorni(prev => prev.map((x, i) => i !== gi ? x : { ...x, esercizi: x.esercizi.map((ex2, ei2) => ei2 !== ei ? ex2 : { ...ex2, [k]: e.target.value }) }))}
+                      placeholder={k === "tempo" ? "es. 30 sec" : "es. 90 sec"}
+                      style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 13 }} />
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: C.muted, marginBottom: 4 }}>Note personalizzate</div>
+                <input value={ex.note} onChange={e => setGiorni(prev => prev.map((x, i) => i !== gi ? x : { ...x, esercizi: x.esercizi.map((ex2, ei2) => ei2 !== ei ? ex2 : { ...ex2, note: e.target.value }) }))}
+                  placeholder="Note specifiche per questo cliente..."
+                  style={{ width: "100%", padding: "7px 10px", borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 13 }} />
+              </div>
+            </div>
+          ))}
+        </Card>
+      ))}
+      <Btn variant="ghost" onClick={aggiungiGiorno} full style={{ marginBottom: 16, borderRadius: 10, padding: 12 }}>+ Aggiungi Giorno</Btn>
+      {msg && <div style={{ padding: "10px 14px", borderRadius: 10, background: msg.includes("✅") ? C.accentSoft : "#FDDEDE", fontSize: 13, marginBottom: 16, color: msg.includes("✅") ? "#0A7A4A" : "#A02020" }}>{msg}</div>}
+      <Btn variant="dark" full onClick={salva} style={{ borderRadius: 10, padding: 13 }}>
+        {saving ? "⏳ Salvataggio..." : "💾 Salva Scheda"}
+      </Btn>
+    </div>
+  );
+}
 function AdminApp({ user, onLogout }) {
   const [view, setView] = useState("dashboard");
   const [clienti, setClienti] = useState([]);
   const [esercizi, setEsercizi] = useState([]);
   const [selCliente, setSelCliente] = useState(null);
+  const [selScheda, setSelScheda] = useState(null);
   const [msgs, setMsgs] = useState([]);
   const [newMsg, setNewMsg] = useState("");
   const msgRef = useRef(null);
