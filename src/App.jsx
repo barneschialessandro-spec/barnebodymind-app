@@ -32,6 +32,36 @@ const Input = ({ label, type = "text", value, onChange, placeholder }) => (
 const Avatar = ({ size = 40, bg = C.accentSoft }) => (
   <div style={{ width: size, height: size, borderRadius: size / 2, background: bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: size * 0.48, flexShrink: 0 }}>👤</div>
 );
+function InstallButton() {
+  const [prompt, setPrompt] = useState(null);
+  const [isIOS, setIsIOS] = useState(false);
+  const [installed, setInstalled] = useState(false);
+
+  useEffect(() => {
+    setIsIOS(/iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase()));
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      setPrompt(e);
+    });
+    window.addEventListener('appinstalled', () => setInstalled(true));
+  }, []);
+
+  if (installed) return null;
+
+  if (isIOS) return (
+    <div style={{ marginTop: 12, padding: "10px 16px", background: "rgba(255,255,255,0.15)", borderRadius: 10, fontSize: 13, color: "#fff" }}>
+      📲 Tocca <strong>Condividi</strong> → <strong>Aggiungi alla Home</strong>
+    </div>
+  );
+
+  if (!prompt) return null;
+
+  return (
+    <button onClick={() => prompt.prompt()} style={{ marginTop: 12, padding: "10px 24px", background: C.accent, border: "none", borderRadius: 10, color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "inherit" }}>
+      📲 Installa App
+    </button>
+  );
+}
 
 function LoginScreen({ onLogin }) {
   const [mode, setMode] = useState("login");
@@ -69,7 +99,8 @@ function LoginScreen({ onLogin }) {
           <div style={{ fontSize: 60, marginBottom: 12 }}>🏋🏻‍♂️</div>
           <h1 style={{ fontSize: 30, fontWeight: 800, color: "#fff" }}>BarneBodyMind</h1>
           <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 15, marginTop: 5 }}>Piattaforma di allenamento personalizzato</p>
-        </div>
+       <InstallButton />
+ </div>
         <Card style={{ padding: 32 }}>
           <div style={{ display: "flex", gap: 4, marginBottom: 24, background: C.bg, padding: 4, borderRadius: 10 }}>
             {[["login","Accedi"],["register","Registrati"]].map(([id,la]) => (
