@@ -25,7 +25,7 @@ const Btn = ({ children, onClick, variant = "primary", full = false, style = {} 
 const Input = ({ label, type = "text", value, onChange, placeholder }) => (
   <div style={{ marginBottom: 16 }}>
     <div style={{ fontSize: 12, fontWeight: 600, color: C.muted, marginBottom: 6 }}>{label}</div>
-    <input type={type} value={value} onChange={onChange} placeholder={placeholder} style={{ width: "100%", padding: "11px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, outline: "none", fontFamily: "inherit", color: C.text }} />
+    <input type={type} value={value} onChange={onChange} placeholder={placeholder} style={{ width: "100%", padding: "11px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, outline: "none", fontFamily: "inherit", color: C.text, background: "#fff" }} />
   </div>
 );
 
