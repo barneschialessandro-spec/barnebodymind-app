@@ -345,8 +345,14 @@ function AdminApp({ user, onLogout }) {
           </div>
           {p.condizioni && <div style={{ marginTop: 12, padding: "9px 12px", background: "#FFF8F0", borderRadius: 8, fontSize: 12, color: "#8A4B1A" }}>⚠️ {p.condizioni}</div>}
           <div style={{ marginTop: 14, display: "flex", gap: 8 }}>
-            <Btn variant="dark" full onClick={() => setSelScheda({ cliente: p, modo: "nuova" })} style={{ borderRadius: 10, padding: "10px 0", fontSize: 13 }}>📋 Crea Scheda</Btn>
-          </div>
+  <Btn variant="dark" full onClick={() => setSelScheda({ cliente: p, modo: "nuova" })} style={{ borderRadius: 10, padding: "10px 0", fontSize: 13 }}>📋 Crea Scheda</Btn>
+  <Btn variant={p.attivo ? "primary" : "ghost"} onClick={async () => {
+    await supabase.from("pazienti").update({ attivo: !p.attivo }).eq("id", p.id);
+    setClienti(prev => prev.map(x => x.id === p.id ? { ...x, attivo: !x.attivo } : x));
+  }} style={{ borderRadius: 10, padding: "10px 14px", fontSize: 13, flexShrink: 0 }}>
+    {p.attivo ? "✅ Attivo" : "⏸️ Inattivo"}
+  </Btn>
+</div>
         </Card>
       ))}
     </div>
