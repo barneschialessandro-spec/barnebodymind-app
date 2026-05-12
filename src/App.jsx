@@ -70,6 +70,7 @@ function LoginScreen({ onLogin }) {
   const [nome, setNome] = useState("");
   const [cognome, setCognome] = useState("");
   const [loading, setLoading] = useState(false);
+  const [ruolo, setRuolo] = useState("cliente");
   const [msg, setMsg] = useState("");
 
   const handleLogin = async () => {
@@ -87,7 +88,7 @@ function LoginScreen({ onLogin }) {
     setLoading(true); setMsg("");
     const { error } = await supabase.auth.signUp({ email, password });
     if (error) { setMsg("❌ " + error.message); setLoading(false); return; }
-    await supabase.from("pazienti").insert([{ nome, cognome, email, ruolo: "cliente" }]);
+    await supabase.from("pazienti").insert([{ nome, cognome, email, ruolo: ruolo }]);
     setMsg("✅ Registrazione completata! Controlla la tua email.");
     setLoading(false);
   };
@@ -103,10 +104,17 @@ function LoginScreen({ onLogin }) {
  </div>
         <Card style={{ padding: 32 }}>
           <div style={{ display: "flex", gap: 4, marginBottom: 24, background: C.bg, padding: 4, borderRadius: 10 }}>
-            {[["login","Accedi"],["register","Registrati"]].map(([id,la]) => (
-              <button key={id} onClick={() => { setMode(id); setMsg(""); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", cursor: "pointer", fontWeight: 600, fontSize: 13, background: mode===id ? C.surface : "transparent", color: mode===id ? C.text : C.muted, fontFamily: "inherit" }}>{la}</button>
-            ))}
-          </div>
+  {[["login","Accedi"],["register","Registrati"]].map(([id,la]) => (
+    <button key={id} onClick={() => { setMode(id); setMsg(""); setRuolo("cliente"); setIsEB(false); }} style={{ flex: 1, padding: "8px 0", borderRadius: 8, border: "none", cursor: "pointer", fontWeight: 600, fontSize: 13, background: mode===id ? C.surface : "transparent", color: mode===id ? C.text : C.muted, fontFamily: "inherit" }}>{la}</button>
+  ))}
+</div>
+{mode === "register" && (
+  <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+    {[["cliente","💪 Sono un Cliente"],["paziente_eb","🩺 Sono un Paziente EB"]].map(([r,la]) => (
+      <button key={r} onClick={() => setRuolo(r)} style={{ flex: 1, padding: "10px 8px", borderRadius: 10, border: `2px solid ${ruolo===r ? C.accent : C.border}`, background: ruolo===r ? C.accentSoft : C.surface, cursor: "pointer", fontWeight: 600, fontSize: 12, color: ruolo===r ? "#0A7A4A" : C.muted, fontFamily: "inherit", transition: "all 0.2s" }}>{la}</button>
+    ))}
+  </div>
+)}
           {mode === "register" && <>
             <Input label="Nome" value={nome} onChange={e => setNome(e.target.value)} placeholder="Il tuo nome" />
             <Input label="Cognome" value={cognome} onChange={e => setCognome(e.target.value)} placeholder="Il tuo cognome" />
