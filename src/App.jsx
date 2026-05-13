@@ -532,7 +532,7 @@ function AdminApp({ user, onLogout }) {
                       ))}
       </div>
     </div>
-    )}
+          }}
   </div>
 );
 }
