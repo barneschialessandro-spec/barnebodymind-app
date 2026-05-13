@@ -533,9 +533,10 @@ function AdminApp({ user, onLogout }) {
             </div>
           </div>
         )}
-      </div>
-  );
-}
+            </div>
+    </div>
+    );
+  }
 function ClienteApp({ user, onLogout }) {
   const [view, setView] = useState("home");
   const [profilo, setProfilo] = useState(user);
