@@ -533,7 +533,7 @@ function AdminApp({ user, onLogout }) {
             </div>
           </div>
         )}
-            </div>
+      </div>
     </div>
     );
   }
