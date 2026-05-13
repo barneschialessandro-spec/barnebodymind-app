@@ -62,6 +62,11 @@ function InstallButton() {
     </button>
   );
 }
+const MUSCOLI = ["Pettorali","Dorsali","Spalle","Bicipiti","Tricipiti","Avambracci","Addominali","Obliqui","Lombari","Glutei","Quadricipiti","Femorali","Polpacci","Tibiali","Core","Cardiovascolare"];
+
+const ATTREZZI = ["Nessun attrezzo","Tappetino","Manubri","Bilanciere","Rack","Panca piana","Panca inclinata","Cavi / Pulley","Lat Machine","Leg Press","Leg Curl","Leg Extension","Tapis Roulant","Cyclette","Ellittica","Vogatore","Kettlebell","Elastici","Palla medica","Bosu","Fitball","TRX","Parallele","Sbarra trazioni","Scaletta","Step","Corda per saltare","Cuscino propriocettivo","Tavoletta propriocettiva","Cavigliera / Polsiera","Palla di spugna","Palla massaggio fasciale","Pilates Ring"];
+
+const TIPI = ["Forza","Resistenza muscolare","Cardio","Stretching","Mobilità articolare","Propriocezione","Coordinazione","Respirazione","Posturale","Riabilitativo","Funzionale","Core stability","Pliometrico","Isometrico","Decompressione vertebrale"];
 
 function LoginScreen({ onLogin }) {
   const [mode, setMode] = useState("login");
@@ -255,6 +260,10 @@ function AdminApp({ user, onLogout }) {
   const [clienti, setClienti] = useState([]);
   const [esercizi, setEsercizi] = useState([]);
   const [selCliente, setSelCliente] = useState(null);
+  const [showFormEsercizio, setShowFormEsercizio] = useState(false);
+  const [filtraMuscolo, setFiltraMuscolo] = useState("");
+  const [filtraTipo, setFiltraTipo] = useState("");
+  const [nuovoEx, setNuovoEx] = useState({ nome: "", tipo: "", muscoli: "", muscoli_secondari: "", attrezzi: "", difficolta: "", descrizione: "", video_url: "" });
   const [selScheda, setSelScheda] = useState(null);
   const [msgs, setMsgs] = useState([]);
   const [newMsg, setNewMsg] = useState("");
@@ -362,20 +371,104 @@ function AdminApp({ user, onLogout }) {
   <CreaScheda cliente={selScheda.cliente} esercizi={esercizi} onBack={() => setSelScheda(null)} />
 )}
         {view === "esercizi" && (
-          <div style={{ padding: 32 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-              <h1 style={{ fontSize: 26, fontWeight: 800, color: C.text }}>Libreria Esercizi</h1>
-              <Btn variant="dark">+ Nuovo Esercizio</Btn>
-            </div>
-            {esercizi.length === 0 && <p style={{ color: C.muted }}>Nessun esercizio inserito.</p>}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(260px,1fr))", gap: 14 }}>
-              {esercizi.map(e => (
-                <Card key={e.id} style={{ padding: 18 }}>
-                  <div style={{ fontSize: 28, marginBottom: 8 }}>🏋️</div>
-                  <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 6 }}>{e.nome}</h3>
-                  <p style={{ fontSize: 13, color: C.muted }}>{e.descrizione}</p>
-                </Card>
-              ))}
+  <div style={{ padding: 32 }}>
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+      <h1 style={{ fontSize: 26, fontWeight: 800, color: C.text }}>Libreria Esercizi</h1>
+      <Btn variant="dark" onClick={() => setShowFormEsercizio(true)}>+ Nuovo Esercizio</Btn>
+    </div>
+    {showFormEsercizio && (
+      <Card style={{ padding: 24, marginBottom: 24, border: `2px solid ${C.accent}` }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18 }}>
+          <h3 style={{ fontWeight: 700, fontSize: 17 }}>Nuovo Esercizio</h3>
+          <Btn size="sm" variant="ghost" onClick={() => setShowFormEsercizio(false)}>✕ Chiudi</Btn>
+        </div>
+        <Input label="Nome Esercizio" value={nuovoEx.nome} onChange={e => setNuovoEx(p => ({...p, nome: e.target.value}))} placeholder="es. Squat con Bilanciere" />
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: C.muted, marginBottom: 6 }}>Tipo di Esercizio</div>
+          <select value={nuovoEx.tipo} onChange={e => setNuovoEx(p => ({...p, tipo: e.target.value}))}
+            style={{ width: "100%", padding: "11px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, fontFamily: "inherit", background: "#fff" }}>
+            <option value="">-- Seleziona tipo --</option>
+            {TIPI.map(t => <option key={t}>{t}</option>)}
+          </select>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: C.muted, marginBottom: 6 }}>Muscolo Principale</div>
+          <select value={nuovoEx.muscoli} onChange={e => setNuovoEx(p => ({...p, muscoli: e.target.value}))}
+            style={{ width: "100%", padding: "11px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, fontFamily: "inherit", background: "#fff" }}>
+            <option value="">-- Seleziona muscolo --</option>
+            {MUSCOLI.map(m => <option key={m}>{m}</option>)}
+          </select>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: C.muted, marginBottom: 6 }}>Muscoli Secondari</div>
+          <select value={nuovoEx.muscoli_secondari} onChange={e => setNuovoEx(p => ({...p, muscoli_secondari: e.target.value}))}
+            style={{ width: "100%", padding: "11px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, fontFamily: "inherit", background: "#fff" }}>
+            <option value="">-- Seleziona muscolo secondario --</option>
+            {MUSCOLI.map(m => <option key={m}>{m}</option>)}
+          </select>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: C.muted, marginBottom: 6 }}>Attrezzo</div>
+          <select value={nuovoEx.attrezzi} onChange={e => setNuovoEx(p => ({...p, attrezzi: e.target.value}))}
+            style={{ width: "100%", padding: "11px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, fontFamily: "inherit", background: "#fff" }}>
+            <option value="">-- Seleziona attrezzo --</option>
+            {ATTREZZI.map(a => <option key={a}>{a}</option>)}
+          </select>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: C.muted, marginBottom: 6 }}>Difficoltà</div>
+          <select value={nuovoEx.difficolta} onChange={e => setNuovoEx(p => ({...p, difficolta: e.target.value}))}
+            style={{ width: "100%", padding: "11px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, fontFamily: "inherit", background: "#fff" }}>
+            <option value="">-- Seleziona difficoltà --</option>
+            {["Facile","Intermedio","Avanzato"].map(d => <option key={d}>{d}</option>)}
+          </select>
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: C.muted, marginBottom: 6 }}>Descrizione</div>
+          <textarea value={nuovoEx.descrizione} onChange={e => setNuovoEx(p => ({...p, descrizione: e.target.value}))}
+            placeholder="Descrivi come eseguire l'esercizio..." rows={3}
+            style={{ width: "100%", padding: "11px 14px", borderRadius: 10, border: `1.5px solid ${C.border}`, fontSize: 14, resize: "none", outline: "none", fontFamily: "inherit" }} />
+        </div>
+        <Input label="Link Video YouTube" value={nuovoEx.video_url} onChange={e => setNuovoEx(p => ({...p, video_url: e.target.value}))} placeholder="https://youtube.com/watch?v=..." />
+        <Btn full variant="dark" onClick={async () => {
+          if (!nuovoEx.nome) return;
+          const { data } = await supabase.from("esercizi").insert([nuovoEx]).select().single();
+          if (data) {
+            setEsercizi(prev => [...prev, data]);
+            setNuovoEx({ nome: "", tipo: "", muscoli: "", muscoli_secondari: "", attrezzi: "", difficolta: "", descrizione: "", video_url: "" });
+            setShowFormEsercizio(false);
+          }
+        }} style={{ borderRadius: 10, padding: 12 }}>💾 Salva Esercizio</Btn>
+      </Card>
+    )}
+    <div style={{ display: "flex", gap: 10, marginBottom: 20, flexWrap: "wrap" }}>
+      <select onChange={e => setFiltraMuscolo(e.target.value)} style={{ padding: "8px 12px", borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 13, fontFamily: "inherit", background: "#fff" }}>
+        <option value="">Tutti i muscoli</option>
+        {MUSCOLI.map(m => <option key={m}>{m}</option>)}
+      </select>
+      <select onChange={e => setFiltraTipo(e.target.value)} style={{ padding: "8px 12px", borderRadius: 8, border: `1.5px solid ${C.border}`, fontSize: 13, fontFamily: "inherit", background: "#fff" }}>
+        <option value="">Tutti i tipi</option>
+        {TIPI.map(t => <option key={t}>{t}</option>)}
+      </select>
+    </div>
+    {esercizi.length === 0 && <p style={{ color: C.muted }}>Nessun esercizio inserito.</p>}
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(260px,1fr))", gap: 14 }}>
+      {esercizi.filter(e => (!filtraMuscolo || e.muscoli === filtraMuscolo) && (!filtraTipo || e.tipo === filtraTipo)).map(e => (
+        <Card key={e.id} style={{ padding: 18 }}>
+          <div style={{ fontSize: 28, marginBottom: 8 }}>🏋️</div>
+          <h3 style={{ fontWeight: 700, fontSize: 15, marginBottom: 6 }}>{e.nome}</h3>
+          <div style={{ fontSize: 12, color: C.muted, marginBottom: 6 }}>{e.tipo} · {e.difficolta}</div>
+          <div style={{ fontSize: 12, color: C.muted, marginBottom: 8 }}>💪 {e.muscoli} {e.muscoli_secondari && `· ${e.muscoli_secondari}`}</div>
+          <div style={{ fontSize: 12, color: C.muted, marginBottom: 8 }}>🔧 {e.attrezzi}</div>
+          <p style={{ fontSize: 13, color: C.muted }}>{e.descrizione}</p>
+          {e.video_url && (
+            <a href={e.video_url} target="_blank" rel="noreferrer" style={{ display: "inline-block", marginTop: 10, fontSize: 12, color: C.accent, fontWeight: 600 }}>▶ Guarda video</a>
+          )}
+        </Card>
+      ))}
+    </div>
+  </div>
+)}
             </div>
           </div>
         )}
