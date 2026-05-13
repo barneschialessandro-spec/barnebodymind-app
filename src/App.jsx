@@ -529,14 +529,13 @@ function AdminApp({ user, onLogout }) {
                   <div style={{ fontWeight: 700, fontSize: 15 }}>{ti}</div>
                   <div style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>{de}</div>
                 </Card>
-              ))}
-            </div>
-          </div>
-        )}
+                      ))}
       </div>
     </div>
-    );
-  }
+    )}
+  </div>
+);
+}
 function ClienteApp({ user, onLogout }) {
   const [view, setView] = useState("home");
   const [profilo, setProfilo] = useState(user);
