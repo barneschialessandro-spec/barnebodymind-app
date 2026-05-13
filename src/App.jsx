@@ -533,7 +533,6 @@ function AdminApp({ user, onLogout }) {
       </div>
     </div>
           )}
-  </div>
 );
 }
 function ClienteApp({ user, onLogout }) {
