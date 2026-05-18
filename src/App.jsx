@@ -359,7 +359,7 @@ await supabase.from("pazienti").update({ attivo: !p.attivo }).eq("id", p.id);
 setClienti(prev => prev.map(x => x.id === p.id ? { ...x, attivo: !x.attivo } : x));
 }} style={{ borderRadius: 10, padding: "10px 14px", fontSize: 13, flexShrink: 0 }}>
 {p.attivo ? "✅ Attivo" : "⏸️ Inattivo"}
-</Btn>
+</Btn> <div style={{ marginTop: 8 }}><select value={p.trainer_email || ""} onChange={async e => { const t = trainers.find(x => x.email === e.target.value); await supabase.from("pazienti").update({ trainer_email: e.target.value, trainer_id: t?.id }).eq("id", p.id); setClienti(prev => prev.map(x => x.id === p.id ? { ...x, trainer_email: e.target.value } : x)); }} style={{ fontSize: 12, padding: "4px 8px", borderRadius: 8, border: "1px solid #D5E4DC", fontFamily: "inherit", color: "#0D1F17", background: "#fff" }}><option value="">-- Assegna Trainer --</option>{trainers.map(t => <option key={t.id} value={t.email}>{t.nome} {t.cognome}</option>)}</select></div>
 </div>
 </Card>
 ))}
